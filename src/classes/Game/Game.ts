@@ -1,12 +1,14 @@
 import Sprite from '../Sprite/Sprite';
 import Background from '../../assets/background.png';
 import Shop from '../../assets/shop.png';
+import Mack from '../Mack/Mack';
 
 class Game {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   private _backgroundSprite: Sprite;
   private _shopSprite: Sprite;
+  private _Mack: Mack;
 
   constructor() {
     this.canvas = document.querySelector('canvas');
@@ -25,6 +27,8 @@ class Game {
       scale: 2.75,
       framesMax: 6,
     });
+
+    this._Mack = new Mack();
   }
 
   animate(): void {
@@ -32,6 +36,7 @@ class Game {
     this._clearFrame();
     this._renderBackground();
     this._renderShop();
+    this._renderCharacters();
   }
 
   _clearFrame(): void {
@@ -41,11 +46,15 @@ class Game {
   }
 
   _renderBackground(): void {
-    this._backgroundSprite.update(this.ctx);
+    this._backgroundSprite.update(this.ctx, this.canvas);
   }
 
   _renderShop(): void {
-    this._shopSprite.update(this.ctx);
+    this._shopSprite.update(this.ctx, this.canvas);
+  }
+
+  _renderCharacters(): void {
+    this._Mack.update(this.ctx, this.canvas);
   }
 }
 
