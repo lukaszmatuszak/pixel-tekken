@@ -1,5 +1,7 @@
+import Game from './classes/Game/Game';
+
 const start = () => {
-    console.log("started");
-}
+    new Game().animate();
+};
 
 start();
