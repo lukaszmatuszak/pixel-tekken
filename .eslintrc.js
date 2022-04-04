@@ -32,8 +32,6 @@ module.exports = {
     '@typescript-eslint/no-extra-semi': ['error'],
     'no-loss-of-precision': 'off',
     '@typescript-eslint/no-loss-of-precision': ['error'],
-    'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
     '@typescript-eslint/no-extra-non-null-assertion': 'error',
     '@typescript-eslint/no-for-in-array': 'error',
