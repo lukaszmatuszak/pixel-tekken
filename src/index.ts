@@ -1,7 +1,7 @@
-import Game from './classes/Game/Game';
+import game from './classes/Game/Game';
 
 const start = (): void => {
-  new Game().animate();
+  game.animate();
 };
 
 start();

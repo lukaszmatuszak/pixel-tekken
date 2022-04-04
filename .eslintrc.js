@@ -17,6 +17,7 @@ module.exports = {
   ],
   rules: {
     'no-underscore-dangle': 0,
+    'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
     'import/extensions': ['error', 'ignorePackages', { ts: 'never' }],
     '@typescript-eslint/no-empty-interface': 'error',
     '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -60,13 +61,13 @@ module.exports = {
         arrayDestructuring: true,
         arrowParameter: true,
         memberVariableDeclaration: true,
-        objectDestructuring: true,
         parameter: true,
         propertyDeclaration: true,
         variableDeclaration: true,
         variableDeclarationIgnoreFunction: true,
       },
     ],
+    '@typescript-eslint/type-annotation-spacing': ['error', { before: false, after: true }],
   },
   settings: {
     'import/resolver': {

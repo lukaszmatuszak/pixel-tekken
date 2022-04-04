@@ -1,26 +1,37 @@
-interface IGame {
-    animate: () => void;
-}
+import Sprite from '../Sprite/Sprite';
+import Background from '../../assets/background.png';
 
-class Game implements IGame {
-  private _canvas: HTMLCanvasElement;
-
-  private _ctx: CanvasRenderingContext2D;
+class Game {
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+  private _backgroundSprite: Sprite;
 
   constructor() {
-    this._canvas = document.querySelector('canvas');
-    this._ctx = this._canvas.getContext('2d');
+    this.canvas = document.querySelector('canvas');
+    this.ctx = this.canvas.getContext('2d');
 
-    this._canvas.width = 1024;
-    this._canvas.height = 576;
+    this.canvas.width = 1024;
+    this.canvas.height = 576;
+
+    this._backgroundSprite = new Sprite({ imageSrc: Background });
   }
 
   animate(): void {
     window.requestAnimationFrame(this.animate.bind(this));
+    this._clearFrame();
+    this._animateBackground();
+  }
 
-    this._ctx.fillStyle = 'black';
-    this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+  _clearFrame(): void {
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  _animateBackground(): void {
+    this._backgroundSprite.update(this.ctx);
   }
 }
 
-export default Game;
+const game: Game = new Game();
+
+export default game;
