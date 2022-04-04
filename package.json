@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "JS Canvas fighting game",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "parcel src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/lukaszmatuszak/pixel-tekken/issues"
   },
-  "homepage": "https://github.com/lukaszmatuszak/pixel-tekken#readme"
+  "homepage": "https://github.com/lukaszmatuszak/pixel-tekken#readme",
+  "devDependencies": {
+    "parcel": "^2.4.1"
+  }
 }
