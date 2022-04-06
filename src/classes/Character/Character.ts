@@ -274,13 +274,14 @@ class Character extends Sprite {
             this._lastPressedKey = event.key;
             this._switchSprite('attack');
             this.keys.attack.pressed = true;
+            if (this.keys.left.pressed) {
+              window.dispatchEvent(new KeyboardEvent('keydown', { key: this.keys.left.key }));
+            }
+            if (this.keys.right.pressed) {
+              window.dispatchEvent(new KeyboardEvent('keydown', { key: this.keys.right.key }));
+            }
           }
-          if (this.keys.left.pressed) {
-            window.dispatchEvent(new KeyboardEvent('keydown', { key: this.keys.left.key }));
-          }
-          if (this.keys.right.pressed) {
-            window.dispatchEvent(new KeyboardEvent('keydown', { key: this.keys.right.key }));
-          }
+
           break;
         }
         default:
@@ -309,6 +310,7 @@ class Character extends Sprite {
           break;
         }
         case this.keys.attack.key: {
+          this.keys.attack.pressed = false;
           if (this.keys.right.pressed) {
             window.dispatchEvent(new KeyboardEvent('keydown', { key: this.keys.right.key }));
           }
