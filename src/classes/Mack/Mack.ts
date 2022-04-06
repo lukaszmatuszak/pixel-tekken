@@ -9,10 +9,10 @@ import Death from '../../assets/mack/Death.png';
 
 const initConfig: ICharacterConstructor = {
   scale: 2.5,
-  offset: { x: 215, y: 157 },
-  height: 150,
-  width: 50,
-  position: { x: 100, y: 0 },
+  offset: { x: 215, y: 172 },
+  height: 135,
+  width: 70,
+  position: { x: 100, y: 345 },
   velocity: { x: 0, y: 0 },
   keys: {
     left: {
@@ -40,6 +40,14 @@ const initConfig: ICharacterConstructor = {
     attack: { imageSrc: Attack, framesMax: 6 },
     takeHit: { imageSrc: TakeHit, framesMax: 4 },
     death: { imageSrc: Death, framesMax: 6 },
+  },
+  attackBox: {
+    offset: {
+      x: 20,
+      y: -35,
+    },
+    width: 235,
+    height: 170,
   },
 };
 

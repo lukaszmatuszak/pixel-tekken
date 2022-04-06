@@ -3,6 +3,12 @@ import { IPosition } from '../../interfaces/IPosition';
 import { IKeys } from '../../interfaces/IKeys';
 import { ISpritesCollection } from '../../interfaces/ISpritesCollection';
 
+interface IAttackBox {
+  offset: IPosition,
+  width: number,
+  height: number
+  position?: IPosition,
+}
 export interface ICharacterConstructor {
     height: number;
     width: number;
@@ -12,6 +18,7 @@ export interface ICharacterConstructor {
     scale: number;
     keys: IKeys;
     sprites: ISpritesCollection;
+    attackBox: IAttackBox;
 }
 
 class Character extends Sprite {
@@ -24,10 +31,12 @@ class Character extends Sprite {
   private _keys: IKeys;
   private _lastPressedKey: string;
   private _sprites: ISpritesCollection;
+  private _health: number;
+  private _attackBox: IAttackBox;
 
   constructor(props: ICharacterConstructor) {
     const {
-      height, width, position, velocity, offset, scale, keys, sprites,
+      height, width, position, velocity, offset, scale, keys, sprites, attackBox
     } = props;
     super({
       position,
@@ -39,11 +48,21 @@ class Character extends Sprite {
     this._gravity = 0.4;
     this._moveSpeed = 5;
     this._jumpHeight = 15;
+    this._health = 100;
     this._height = height;
     this._width = width;
     this._velocity = velocity;
     this._keys = keys;
     this._sprites = sprites;
+    this._attackBox = {
+      position: {
+        x: this.position.x,
+        y: this.position.y,
+      },
+      offset: attackBox.offset,
+      height: attackBox.height,
+      width: attackBox.width,
+    };
 
     for (const key in this._sprites) {
         sprites[key as keyof ISpritesCollection].image = new Image();
@@ -55,7 +74,17 @@ class Character extends Sprite {
 
   update(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
     this._animateFrames();
-    this._draw(ctx);
+
+    // ctx.fillStyle = "blue";
+    // ctx.fillRect(
+    //   this.position.x,
+    //   this.position.y,
+    //   this._width,
+    //   this._height,
+    // );
+
+    this._updateAttackBoxPosition(ctx);
+    this._draw(ctx); 
 
     this.position.y += this._velocity.y;
     this.position.x += this._velocity.x;
@@ -64,8 +93,6 @@ class Character extends Sprite {
     if (this.position.y + this._height + this._velocity.y >= canvas.height - 96) {
       // prevent from falling
       this._velocity.y = 0;
-      // prevent flashy animation on falling down
-      this.position.y = 330;
     } else {
       // aplly gravity
       this._velocity.y += this._gravity;
@@ -79,6 +106,33 @@ class Character extends Sprite {
     this._handleMoveLeft();
     this._handleMoveRight(canvas);
     this._handleJump();
+  }
+
+  takeHit(): void {
+    this._health -= 20;
+
+    if (this._health <= 0) {
+      this._switchSprite("death");
+    } else {
+      this._switchSprite("takeHit");
+    }
+  }
+
+  _updateAttackBoxPosition(ctx: CanvasRenderingContext2D) {
+    this._attackBox.position.x = this.position.x + this._attackBox.offset.x;
+    this._attackBox.position.y = this.position.y + this._attackBox.offset.y;
+
+    this._drawAttackBox(ctx);
+  }
+
+  private _drawAttackBox(ctx: CanvasRenderingContext2D): void {
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(
+      this._attackBox.position.x,
+      this._attackBox.position.y,
+      this._attackBox.width,
+      this._attackBox.height
+    );
   }
 
   private _handleMoveLeft(): void {

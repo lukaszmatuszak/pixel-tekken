@@ -13,8 +13,8 @@ class Sprite {
   image: HTMLImageElement;
   currentFrame: number;
   framesMax: number;
+  spriteOffset: IPosition;
   private _scale: number;
-  private _offset: IPosition;
   private _framesElapsed: number;
   private _framesHold: number;
 
@@ -27,7 +27,7 @@ class Sprite {
     this.image.src = imageSrc;
     this._scale = scale;
     this.framesMax = framesMax;
-    this._offset = offset;
+    this.spriteOffset = offset;
     this.currentFrame = 0;
     this._framesElapsed = 0;
     this._framesHold = 15;
@@ -58,8 +58,8 @@ class Sprite {
       0,
       this.image.width / this.framesMax,
       this.image.height,
-      this.position.x - this._offset.x,
-      this.position.y - this._offset.y,
+      this.position.x - this.spriteOffset.x,
+      this.position.y - this.spriteOffset.y,
       (this.image.width / this.framesMax) * this._scale,
       this.image.height * this._scale,
     );
