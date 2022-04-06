@@ -51,40 +51,8 @@ class Game {
     this._renderBackground();
     this._renderShop();
     this._renderCharacters();
-
-    if (
-      collision(
-        this._Mack,
-        this._Kenji,
-      )
-      && this._Mack.keys.attack.pressed
-      && this._Mack.currentFrame === 4
-    ) {
-      this._Kenji.takeHit();
-
-      gsap.to('#player-two-healthbar', { width: `${this._Kenji.health}%` });
-    }
-
-    if (this._Mack.keys.attack.pressed && this._Mack.currentFrame === 4) {
-      this._Mack.keys.attack.pressed = false;
-    }
-
-    if (
-      collision(this._Kenji, this._Mack)
-      && this._Kenji.keys.attack.pressed
-      && this._Kenji.currentFrame === 2
-    ) {
-      this._Mack.takeHit();
-      gsap.to('#player-one-healthbar', { width: `${this._Mack.health}%` });
-    }
-
-    if (this._Kenji.keys.attack.pressed && this._Kenji.currentFrame === 2) {
-      this._Kenji.keys.attack.pressed = false;
-    }
-
-    if (this._Mack.health <= 0 || this._Kenji.health <= 0) {
-      determineWinner(this._Mack.health, this._Kenji.health);
-    }
+    this._handleHitCollision();
+    this._determineWinner();
   }
 
   _clearFrame(): void {
@@ -104,6 +72,62 @@ class Game {
   _renderCharacters(): void {
     this._Mack.update(this.ctx, this.canvas);
     this._Kenji.update(this.ctx, this.canvas);
+  }
+
+  private _handleHitCollision(): void {
+    this._handleMackAttackCollision();
+    this._handleKenjiAttackCollision();
+  }
+
+  private _handleMackAttackCollision(): void {
+    if (
+      collision(this._Mack, this._Kenji)
+            && this._Mack.keys.attack.pressed
+            && this._Mack.currentFrame === 4
+            && this._Kenji._framesElapsed % this._Kenji._framesHold === 0
+            && this._Mack.image === this._Mack.sprites.attack.image
+    ) {
+      this._Kenji.takeHit();
+
+      gsap.to('#player-two-healthbar', { width: `${this._Kenji.health}%` });
+    }
+
+    // Handle miss
+    if (
+      this._Mack.keys.attack.pressed
+            && this._Mack.currentFrame === 4
+            && this._Mack._framesElapsed % this._Mack._framesHold === 0
+    ) {
+      this._Mack.keys.attack.pressed = false;
+    }
+  }
+
+  private _handleKenjiAttackCollision(): void {
+    if (
+      collision(this._Kenji, this._Mack)
+            && this._Kenji.keys.attack.pressed
+            && this._Kenji.currentFrame === 2
+            && this._Mack._framesElapsed % this._Mack._framesHold === 0
+            && this._Kenji.image === this._Kenji.sprites.attack.image
+    ) {
+      this._Mack.takeHit();
+      gsap.to('#player-one-healthbar', { width: `${this._Mack.health}%` });
+    }
+
+    // Handle miss
+    if (
+      this._Kenji.keys.attack.pressed
+            && this._Kenji.currentFrame === 2
+            && this._Kenji._framesElapsed % this._Kenji._framesHold === 0
+    ) {
+      this._Kenji.keys.attack.pressed = false;
+    }
+  }
+
+  private _determineWinner(): void {
+    if (this._Mack.health <= 0 || this._Kenji.health <= 0) {
+      determineWinner(this._Mack.health, this._Kenji.health);
+    }
   }
 }
 

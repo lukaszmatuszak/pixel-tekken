@@ -27,12 +27,12 @@ class Character extends Sprite {
   attackBox: IAttackBox;
   keys: IKeys;
   health: number;
+  sprites: ISpritesCollection;
   protected _velocity: IPosition;
   private _gravity: number; // global
   private _moveSpeed: number; // global
   private _jumpHeight: number; // global
   private _lastPressedKey: string;
-  private _sprites: ISpritesCollection;
 
   constructor(props: ICharacterConstructor) {
     const {
@@ -53,7 +53,7 @@ class Character extends Sprite {
     this.width = width;
     this._velocity = velocity;
     this.keys = keys;
-    this._sprites = sprites;
+    this.sprites = sprites;
     this.attackBox = {
       position: {
         x: this.position.x,
@@ -64,7 +64,7 @@ class Character extends Sprite {
       width: attackBox.width,
     };
 
-    for (const key in this._sprites) {
+    for (const key in this.sprites) {
         sprites[key as keyof ISpritesCollection].image = new Image();
         sprites[key as keyof ISpritesCollection].image.src = sprites[key as keyof ISpritesCollection].imageSrc;
     }
@@ -179,76 +179,76 @@ class Character extends Sprite {
 
   private _switchSprite(sprite: string): void {
     // override other animations (attack)
-    if (this.image === this._sprites.attack.image && this.currentFrame < this._sprites.attack.framesMax - 1) {
+    if (this.image === this.sprites.attack.image && this.currentFrame < this.sprites.attack.framesMax - 1) {
       return;
     }
 
     // override other animations (take hit)
-    if (this.image === this._sprites.takeHit.image && this.currentFrame < this._sprites.takeHit.framesMax - 1) {
+    if (this.image === this.sprites.takeHit.image && this.currentFrame < this.sprites.takeHit.framesMax - 1) {
       return;
     }
 
     switch (sprite) {
       case 'idle': {
-        if (this.image === this._sprites.idle.image) {
+        if (this.image === this.sprites.idle.image) {
           return;
         }
-        this.image = this._sprites.idle.image;
-        this.framesMax = this._sprites.idle.framesMax;
+        this.image = this.sprites.idle.image;
+        this.framesMax = this.sprites.idle.framesMax;
         this.currentFrame = 0;
         break;
       }
       case 'run': {
-        if (this.image === this._sprites.run.image) {
+        if (this.image === this.sprites.run.image) {
           return;
         }
-        this.image = this._sprites.run.image;
-        this.framesMax = this._sprites.run.framesMax;
+        this.image = this.sprites.run.image;
+        this.framesMax = this.sprites.run.framesMax;
         this.currentFrame = 0;
         break;
       }
       case 'jump': {
-        if (this.image === this._sprites.jump.image) {
+        if (this.image === this.sprites.jump.image) {
           return;
         }
-        this.image = this._sprites.jump.image;
-        this.framesMax = this._sprites.jump.framesMax;
+        this.image = this.sprites.jump.image;
+        this.framesMax = this.sprites.jump.framesMax;
         this.currentFrame = 0;
         break;
       }
       case 'fall': {
-        if (this.image === this._sprites.fall.image) {
+        if (this.image === this.sprites.fall.image) {
           return;
         }
-        this.image = this._sprites.fall.image;
-        this.framesMax = this._sprites.fall.framesMax;
+        this.image = this.sprites.fall.image;
+        this.framesMax = this.sprites.fall.framesMax;
         this.currentFrame = 0;
         break;
       }
       case 'attack': {
-        if (this.image === this._sprites.attack.image) {
+        if (this.image === this.sprites.attack.image) {
           return;
         }
-        this.image = this._sprites.attack.image;
-        this.framesMax = this._sprites.attack.framesMax;
+        this.image = this.sprites.attack.image;
+        this.framesMax = this.sprites.attack.framesMax;
         this.currentFrame = 0;
         break;
       }
       case 'takeHit': {
-        if (this.image === this._sprites.takeHit.image) {
+        if (this.image === this.sprites.takeHit.image) {
           return;
         }
-        this.image = this._sprites.takeHit.image;
-        this.framesMax = this._sprites.takeHit.framesMax;
+        this.image = this.sprites.takeHit.image;
+        this.framesMax = this.sprites.takeHit.framesMax;
         this.currentFrame = 0;
         break;
       }
       case 'death': {
-        if (this.image === this._sprites.death.image) {
+        if (this.image === this.sprites.death.image) {
           return;
         }
-        this.image = this._sprites.death.image;
-        this.framesMax = this._sprites.death.framesMax;
+        this.image = this.sprites.death.image;
+        this.framesMax = this.sprites.death.framesMax;
         this.currentFrame = 0;
         break;
       }
@@ -276,6 +276,7 @@ class Character extends Sprite {
         }
         case this.keys.attack.key: {
           if (!this.keys.attack.pressed) {
+            this._lastPressedKey = event.key;
             this._switchSprite("attack");
             this.keys.attack.pressed = true;
           }

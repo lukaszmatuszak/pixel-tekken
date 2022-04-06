@@ -14,9 +14,9 @@ class Sprite {
   currentFrame: number;
   framesMax: number;
   spriteOffset: IPosition;
+  framesElapsed: number;
+  framesHold: number;
   private _scale: number;
-  private _framesElapsed: number;
-  private _framesHold: number;
 
   constructor(props: ISpriteConstructor) {
     const {
@@ -29,8 +29,8 @@ class Sprite {
     this.framesMax = framesMax;
     this.spriteOffset = offset;
     this.currentFrame = 0;
-    this._framesElapsed = 0;
-    this._framesHold = 15;
+    this.framesElapsed = 0;
+    this.framesHold = 15;
   }
 
   update(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
@@ -39,8 +39,8 @@ class Sprite {
   }
 
   protected _animateFrames(): void {
-    this._framesElapsed += 1;
-    if (this._framesElapsed % this._framesHold !== 0) {
+    this.framesElapsed += 1;
+    if (this.framesElapsed % this.framesHold !== 0) {
       return;
     }
 
