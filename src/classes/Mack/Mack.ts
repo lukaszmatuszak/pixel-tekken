@@ -1,9 +1,13 @@
 import Character, { ICharacterConstructor } from '../Character/Character';
 import Idle from '../../assets/mack/Idle.png';
+import Run from '../../assets/mack/Run.png';
+import Jump from '../../assets/mack/Jump.png';
+import Fall from '../../assets/mack/Fall.png';
+import Attack from '../../assets/mack/Attack1.png';
+import TakeHit from '../../assets/mack/Take Hit.png';
+import Death from '../../assets/mack/Death.png';
 
 const initConfig: ICharacterConstructor = {
-  imageSrc: Idle,
-  framesMax: 8,
   scale: 2.5,
   offset: { x: 215, y: 157 },
   height: 150,
@@ -27,6 +31,15 @@ const initConfig: ICharacterConstructor = {
       key: ' ',
       pressed: false,
     },
+  },
+  sprites: {
+    idle: { imageSrc: Idle, framesMax: 8 },
+    run: { imageSrc: Run, framesMax: 8 },
+    jump: { imageSrc: Jump, framesMax: 2 },
+    fall: { imageSrc: Fall, framesMax: 2 },
+    attack: { imageSrc: Attack, framesMax: 6 },
+    takeHit: { imageSrc: TakeHit, framesMax: 4 },
+    death: { imageSrc: Death, framesMax: 6 },
   },
 };
 

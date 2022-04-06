@@ -9,6 +9,7 @@ class Game {
   private _backgroundSprite: Sprite;
   private _shopSprite: Sprite;
   private _Mack: Mack;
+  private _framesCount: number;
 
   constructor() {
     this.canvas = document.querySelector('canvas');
@@ -29,10 +30,18 @@ class Game {
     });
 
     this._Mack = new Mack();
+    this._framesCount = 0;
   }
 
   animate(): void {
+    this._framesCount += 1;
     window.requestAnimationFrame(this.animate.bind(this));
+
+    // slow down animation to find bugs
+    if (this._framesCount % 5 !== 0) {
+      return;
+    }
+
     this._clearFrame();
     this._renderBackground();
     this._renderShop();

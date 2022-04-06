@@ -10,11 +10,11 @@ interface ISpriteConstructor {
 
 class Sprite {
   position: IPosition;
-  private _image: HTMLImageElement;
-  private _framesMax: number;
+  image: HTMLImageElement;
+  currentFrame: number;
+  framesMax: number;
   private _scale: number;
   private _offset: IPosition;
-  private _currentFrame: number;
   private _framesElapsed: number;
   private _framesHold: number;
 
@@ -23,12 +23,12 @@ class Sprite {
       imageSrc, position = { x: 0, y: 0 }, scale = 1, framesMax = 1, offset = { x: 0, y: 0 },
     } = props;
     this.position = position;
-    this._image = new Image();
-    this._image.src = imageSrc;
+    this.image = new Image();
+    this.image.src = imageSrc;
     this._scale = scale;
-    this._framesMax = framesMax;
+    this.framesMax = framesMax;
     this._offset = offset;
-    this._currentFrame = 0;
+    this.currentFrame = 0;
     this._framesElapsed = 0;
     this._framesHold = 15;
   }
@@ -44,24 +44,24 @@ class Sprite {
       return;
     }
 
-    if (this._currentFrame < this._framesMax - 1) {
-      this._currentFrame += 1;
+    if (this.currentFrame < this.framesMax - 1) {
+      this.currentFrame += 1;
     } else {
-      this._currentFrame = 0;
+      this.currentFrame = 0;
     }
   }
 
   protected _draw(ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(
-      this._image,
-      this._currentFrame * (this._image.width / this._framesMax),
+      this.image,
+      this.currentFrame * (this.image.width / this.framesMax),
       0,
-      this._image.width / this._framesMax,
-      this._image.height,
+      this.image.width / this.framesMax,
+      this.image.height,
       this.position.x - this._offset.x,
       this.position.y - this._offset.y,
-      (this._image.width / this._framesMax) * this._scale,
-      this._image.height * this._scale,
+      (this.image.width / this.framesMax) * this._scale,
+      this.image.height * this._scale,
     );
   }
 }

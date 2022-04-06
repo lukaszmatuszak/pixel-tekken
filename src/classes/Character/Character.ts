@@ -1,6 +1,7 @@
 import Sprite from '../Sprite/Sprite';
 import { IPosition } from '../../interfaces/IPosition';
 import { IKeys } from '../../interfaces/IKeys';
+import { ISpritesCollection } from '../../interfaces/ISpritesCollection';
 
 export interface ICharacterConstructor {
     height: number;
@@ -9,9 +10,8 @@ export interface ICharacterConstructor {
     velocity: IPosition;
     offset: IPosition;
     scale: number;
-    framesMax: number;
-    imageSrc: string;
     keys: IKeys;
+    sprites: ISpritesCollection;
 }
 
 class Character extends Sprite {
@@ -23,15 +23,16 @@ class Character extends Sprite {
   private _jumpHeight: number; // global
   private _keys: IKeys;
   private _lastPressedKey: string;
+  private _sprites: ISpritesCollection;
 
   constructor(props: ICharacterConstructor) {
     const {
-      height, width, position, velocity, offset, scale, framesMax, imageSrc, keys,
+      height, width, position, velocity, offset, scale, keys, sprites,
     } = props;
     super({
       position,
-      imageSrc,
-      framesMax,
+      imageSrc: sprites.idle.imageSrc,
+      framesMax: sprites.idle.framesMax,
       scale,
       offset,
     });
@@ -42,6 +43,12 @@ class Character extends Sprite {
     this._width = width;
     this._velocity = velocity;
     this._keys = keys;
+    this._sprites = sprites;
+
+    for (const key in this._sprites) {
+        sprites[key as keyof ISpritesCollection].image = new Image();
+        sprites[key as keyof ISpritesCollection].image.src = sprites[key as keyof ISpritesCollection].imageSrc;
+    }
 
     this._setUpListeners();
   }
@@ -57,9 +64,16 @@ class Character extends Sprite {
     if (this.position.y + this._height + this._velocity.y >= canvas.height - 96) {
       // prevent from falling
       this._velocity.y = 0;
+      // prevent flashy animation on falling down
+      this.position.y = 330;
     } else {
       // aplly gravity
       this._velocity.y += this._gravity;
+    }
+
+    // set default idle sprite
+    if (!this._keys.left.pressed && !this._keys.right.pressed && this._velocity.y === 0) {
+      this._switchSprite('idle');
     }
 
     this._handleMoveLeft();
@@ -70,26 +84,122 @@ class Character extends Sprite {
   private _handleMoveLeft(): void {
     if (
       this._keys.left.pressed
-      && this._lastPressedKey === this._keys.left.key
-      && this.position.x - this._moveSpeed >= 0
+            && this._lastPressedKey === this._keys.left.key
+            && this.position.x - this._moveSpeed >= 0
     ) {
       this._velocity.x = -this._moveSpeed;
+      if (this._velocity.y !== 0) {
+        return;
+      }
+      this._switchSprite('run');
     }
   }
 
   private _handleMoveRight(canvas: HTMLCanvasElement): void {
     if (
       this._keys.right.pressed
-      && this._lastPressedKey === this._keys.right.key
-      && this.position.x + this._width + this._moveSpeed <= canvas.width
+            && this._lastPressedKey === this._keys.right.key
+            && this.position.x + this._width + this._moveSpeed <= canvas.width
     ) {
       this._velocity.x = this._moveSpeed;
+      if (this._velocity.y !== 0) {
+        return;
+      }
+      this._switchSprite('run');
     }
   }
 
   private _handleJump(): void {
     if (this._keys.jump.pressed && this._velocity.y === 0) {
       this._velocity.y = -this._jumpHeight;
+    }
+
+    if (this._velocity.y < 0) {
+      this._switchSprite('jump');
+    }
+
+    if (this._velocity.y > 0) {
+      this._switchSprite('fall');
+    }
+  }
+
+  private _switchSprite(sprite: string): void {
+    // override other animations (attack)
+    if (this.image === this._sprites.attack.image && this.currentFrame < this._sprites.attack.framesMax - 1) {
+      return;
+    }
+
+    // override other animations (take hit)
+    if (this.image === this._sprites.takeHit.image && this.currentFrame < this._sprites.takeHit.framesMax - 1) {
+      return;
+    }
+
+    switch (sprite) {
+      case 'idle': {
+        if (this.image === this._sprites.idle.image) {
+          return;
+        }
+        this.image = this._sprites.idle.image;
+        this.framesMax = this._sprites.idle.framesMax;
+        this.currentFrame = 0;
+        break;
+      }
+      case 'run': {
+        if (this.image === this._sprites.run.image) {
+          return;
+        }
+        this.image = this._sprites.run.image;
+        this.framesMax = this._sprites.run.framesMax;
+        this.currentFrame = 0;
+        break;
+      }
+      case 'jump': {
+        if (this.image === this._sprites.jump.image) {
+          return;
+        }
+        this.image = this._sprites.jump.image;
+        this.framesMax = this._sprites.jump.framesMax;
+        this.currentFrame = 0;
+        break;
+      }
+      case 'fall': {
+        if (this.image === this._sprites.fall.image) {
+          return;
+        }
+        this.image = this._sprites.fall.image;
+        this.framesMax = this._sprites.fall.framesMax;
+        this.currentFrame = 0;
+        break;
+      }
+      case 'attack': {
+        if (this.image === this._sprites.attack.image) {
+          return;
+        }
+        this.image = this._sprites.attack.image;
+        this.framesMax = this._sprites.attack.framesMax;
+        this.currentFrame = 0;
+        break;
+      }
+      case 'takeHit': {
+        if (this.image === this._sprites.takeHit.image) {
+          return;
+        }
+        this.image = this._sprites.takeHit.image;
+        this.framesMax = this._sprites.takeHit.framesMax;
+        this.currentFrame = 0;
+        break;
+      }
+      case 'death': {
+        if (this.image === this._sprites.death.image) {
+          return;
+        }
+        this.image = this._sprites.death.image;
+        this.framesMax = this._sprites.death.framesMax;
+        this.currentFrame = 0;
+        break;
+      }
+      default:
+        break;
     }
   }
 
@@ -112,6 +222,7 @@ class Character extends Sprite {
         }
         case this._keys.attack.key: {
           if (!this._keys.attack.pressed) {
+            this._switchSprite("attack");
             this._keys.attack.pressed = true;
           }
           break;
@@ -126,18 +237,14 @@ class Character extends Sprite {
         case this._keys.left.key: {
           this._keys.left.pressed = false;
           if (this._keys.right.pressed) {
-            window.dispatchEvent(
-              new KeyboardEvent('keydown', { key: this._keys.right.key }),
-            );
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: this._keys.right.key }));
           }
           break;
         }
         case this._keys.right.key: {
           this._keys.right.pressed = false;
           if (this._keys.left.pressed) {
-            window.dispatchEvent(
-              new KeyboardEvent('keydown', { key: this._keys.left.key }),
-            );
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: this._keys.left.key }));
           }
           break;
         }
