@@ -53,6 +53,7 @@ class Game {
     this._clearFrame();
     this._renderBackground();
     this._renderShop();
+    this._addBackgroundOverlay();
     this._renderCharacters();
     this._handleHitCollision();
     this._determineWinner();
@@ -90,6 +91,11 @@ class Game {
 
   private _renderShop(): void {
     this._shopSprite.update(this.ctx, this.canvas);
+  }
+
+  private _addBackgroundOverlay(): void {
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   private _renderCharacters(): void {
