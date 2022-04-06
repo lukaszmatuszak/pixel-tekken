@@ -84,7 +84,7 @@ class Game {
       collision(this._Mack, this._Kenji)
             && this._Mack.keys.attack.pressed
             && this._Mack.currentFrame === 4
-            && this._Kenji._framesElapsed % this._Kenji._framesHold === 0
+            && this._Kenji.framesElapsed % this._Kenji.framesHold === 0
             && this._Mack.image === this._Mack.sprites.attack.image
     ) {
       this._Kenji.takeHit();
@@ -96,7 +96,7 @@ class Game {
     if (
       this._Mack.keys.attack.pressed
             && this._Mack.currentFrame === 4
-            && this._Mack._framesElapsed % this._Mack._framesHold === 0
+            && this._Mack.framesElapsed % this._Mack.framesHold === 0
     ) {
       this._Mack.keys.attack.pressed = false;
     }
@@ -107,7 +107,7 @@ class Game {
       collision(this._Kenji, this._Mack)
             && this._Kenji.keys.attack.pressed
             && this._Kenji.currentFrame === 2
-            && this._Mack._framesElapsed % this._Mack._framesHold === 0
+            && this._Mack.framesElapsed % this._Mack.framesHold === 0
             && this._Kenji.image === this._Kenji.sprites.attack.image
     ) {
       this._Mack.takeHit();
@@ -118,7 +118,7 @@ class Game {
     if (
       this._Kenji.keys.attack.pressed
             && this._Kenji.currentFrame === 2
-            && this._Kenji._framesElapsed % this._Kenji._framesHold === 0
+            && this._Kenji.framesElapsed % this._Kenji.framesHold === 0
     ) {
       this._Kenji.keys.attack.pressed = false;
     }
