@@ -12,7 +12,7 @@ const initConfig: ICharacterConstructor = {
   offset: { x: 215, y: 177 },
   height: 145,
   width: 60,
-  position: { x: 700, y: 335 },
+  position: { x: 850, y: 335 },
   velocity: { x: 0, y: 0 },
   keys: {
     left: {

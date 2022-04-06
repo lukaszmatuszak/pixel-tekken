@@ -22,17 +22,17 @@ export interface ICharacterConstructor {
 }
 
 class Character extends Sprite {
+  height: number;
+  width: number;
+  attackBox: IAttackBox;
+  keys: IKeys;
+  health: number;
   protected _velocity: IPosition;
-  protected _height: number;
-  protected _width: number;
   private _gravity: number; // global
   private _moveSpeed: number; // global
   private _jumpHeight: number; // global
-  private _keys: IKeys;
   private _lastPressedKey: string;
   private _sprites: ISpritesCollection;
-  private _health: number;
-  private _attackBox: IAttackBox;
 
   constructor(props: ICharacterConstructor) {
     const {
@@ -48,13 +48,13 @@ class Character extends Sprite {
     this._gravity = 0.4;
     this._moveSpeed = 5;
     this._jumpHeight = 15;
-    this._health = 100;
-    this._height = height;
-    this._width = width;
+    this.health = 100;
+    this.height = height;
+    this.width = width;
     this._velocity = velocity;
-    this._keys = keys;
+    this.keys = keys;
     this._sprites = sprites;
-    this._attackBox = {
+    this.attackBox = {
       position: {
         x: this.position.x,
         y: this.position.y,
@@ -90,7 +90,7 @@ class Character extends Sprite {
     this.position.x += this._velocity.x;
     this._velocity.x = 0;
 
-    if (this.position.y + this._height + this._velocity.y >= canvas.height - 96) {
+    if (this.position.y + this.height + this._velocity.y >= canvas.height - 96) {
       // prevent from falling
       this._velocity.y = 0;
     } else {
@@ -99,7 +99,7 @@ class Character extends Sprite {
     }
 
     // set default idle sprite
-    if (!this._keys.left.pressed && !this._keys.right.pressed && this._velocity.y === 0) {
+    if (!this.keys.left.pressed && !this.keys.right.pressed && this._velocity.y === 0) {
       this._switchSprite('idle');
     }
 
@@ -109,9 +109,9 @@ class Character extends Sprite {
   }
 
   takeHit(): void {
-    this._health -= 20;
+    this.health -= 20;
 
-    if (this._health <= 0) {
+    if (this.health <= 0) {
       this._switchSprite("death");
     } else {
       this._switchSprite("takeHit");
@@ -119,8 +119,8 @@ class Character extends Sprite {
   }
 
   _updateAttackBoxPosition(ctx: CanvasRenderingContext2D) {
-    this._attackBox.position.x = this.position.x + this._attackBox.offset.x;
-    this._attackBox.position.y = this.position.y + this._attackBox.offset.y;
+    this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
+    this.attackBox.position.y = this.position.y + this.attackBox.offset.y;
 
     this._drawAttackBox(ctx);
   }
@@ -128,17 +128,17 @@ class Character extends Sprite {
   private _drawAttackBox(ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = "yellow";
     ctx.fillRect(
-      this._attackBox.position.x,
-      this._attackBox.position.y,
-      this._attackBox.width,
-      this._attackBox.height
+      this.attackBox.position.x,
+      this.attackBox.position.y,
+      this.attackBox.width,
+      this.attackBox.height
     );
   }
 
   private _handleMoveLeft(): void {
     if (
-      this._keys.left.pressed
-            && this._lastPressedKey === this._keys.left.key
+      this.keys.left.pressed
+            && this._lastPressedKey === this.keys.left.key
             && this.position.x - this._moveSpeed >= 0
     ) {
       this._velocity.x = -this._moveSpeed;
@@ -151,9 +151,9 @@ class Character extends Sprite {
 
   private _handleMoveRight(canvas: HTMLCanvasElement): void {
     if (
-      this._keys.right.pressed
-            && this._lastPressedKey === this._keys.right.key
-            && this.position.x + this._width + this._moveSpeed <= canvas.width
+      this.keys.right.pressed
+            && this._lastPressedKey === this.keys.right.key
+            && this.position.x + this.width + this._moveSpeed <= canvas.width
     ) {
       this._velocity.x = this._moveSpeed;
       if (this._velocity.y !== 0) {
@@ -164,7 +164,7 @@ class Character extends Sprite {
   }
 
   private _handleJump(): void {
-    if (this._keys.jump.pressed && this._velocity.y === 0) {
+    if (this.keys.jump.pressed && this._velocity.y === 0) {
       this._velocity.y = -this._jumpHeight;
     }
 
@@ -260,24 +260,24 @@ class Character extends Sprite {
   private _setUpListeners(): void {
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       switch (event.key) {
-        case this._keys.left.key: {
+        case this.keys.left.key: {
           this._lastPressedKey = event.key;
-          this._keys.left.pressed = true;
+          this.keys.left.pressed = true;
           break;
         }
-        case this._keys.right.key: {
+        case this.keys.right.key: {
           this._lastPressedKey = event.key;
-          this._keys.right.pressed = true;
+          this.keys.right.pressed = true;
           break;
         }
-        case this._keys.jump.key: {
-          this._keys.jump.pressed = true;
+        case this.keys.jump.key: {
+          this.keys.jump.pressed = true;
           break;
         }
-        case this._keys.attack.key: {
-          if (!this._keys.attack.pressed) {
+        case this.keys.attack.key: {
+          if (!this.keys.attack.pressed) {
             this._switchSprite("attack");
-            this._keys.attack.pressed = true;
+            this.keys.attack.pressed = true;
           }
           break;
         }
@@ -288,22 +288,22 @@ class Character extends Sprite {
 
     window.addEventListener('keyup', (event: KeyboardEvent) => {
       switch (event.key) {
-        case this._keys.left.key: {
-          this._keys.left.pressed = false;
-          if (this._keys.right.pressed) {
-            window.dispatchEvent(new KeyboardEvent('keydown', { key: this._keys.right.key }));
+        case this.keys.left.key: {
+          this.keys.left.pressed = false;
+          if (this.keys.right.pressed) {
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: this.keys.right.key }));
           }
           break;
         }
-        case this._keys.right.key: {
-          this._keys.right.pressed = false;
-          if (this._keys.left.pressed) {
-            window.dispatchEvent(new KeyboardEvent('keydown', { key: this._keys.left.key }));
+        case this.keys.right.key: {
+          this.keys.right.pressed = false;
+          if (this.keys.left.pressed) {
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: this.keys.left.key }));
           }
           break;
         }
-        case this._keys.jump.key: {
-          this._keys.jump.pressed = false;
+        case this.keys.jump.key: {
+          this.keys.jump.pressed = false;
           break;
         }
         default:

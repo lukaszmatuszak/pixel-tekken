@@ -1,8 +1,10 @@
+import gsap from 'gsap';
 import Sprite from '../Sprite/Sprite';
 import Background from '../../assets/background.png';
 import Shop from '../../assets/shop.png';
 import Mack from '../Mack/Mack';
 import Kenji from '../Kenji/Kenji';
+import { determineWinner, collision } from '../../utils/utils';
 
 class Game {
   canvas: HTMLCanvasElement;
@@ -49,6 +51,40 @@ class Game {
     this._renderBackground();
     this._renderShop();
     this._renderCharacters();
+
+    if (
+      collision(
+        this._Mack,
+        this._Kenji,
+      )
+      && this._Mack.keys.attack.pressed
+      && this._Mack.currentFrame === 4
+    ) {
+      this._Kenji.takeHit();
+
+      gsap.to('#player-two-healthbar', { width: `${this._Kenji.health}%` });
+    }
+
+    if (this._Mack.keys.attack.pressed && this._Mack.currentFrame === 4) {
+      this._Mack.keys.attack.pressed = false;
+    }
+
+    if (
+      collision(this._Kenji, this._Mack)
+      && this._Kenji.keys.attack.pressed
+      && this._Kenji.currentFrame === 2
+    ) {
+      this._Mack.takeHit();
+      gsap.to('#player-one-healthbar', { width: `${this._Mack.health}%` });
+    }
+
+    if (this._Kenji.keys.attack.pressed && this._Kenji.currentFrame === 2) {
+      this._Kenji.keys.attack.pressed = false;
+    }
+
+    if (this._Mack.health <= 0 || this._Kenji.health <= 0) {
+      determineWinner(this._Mack.health, this._Kenji.health);
+    }
   }
 
   _clearFrame(): void {

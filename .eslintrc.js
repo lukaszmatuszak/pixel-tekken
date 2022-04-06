@@ -16,6 +16,7 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    'implicit-arrow-linebreak': 0,
     'no-underscore-dangle': 0,
     'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
     'import/extensions': ['error', 'ignorePackages', { ts: 'never' }],
