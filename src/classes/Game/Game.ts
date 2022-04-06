@@ -2,6 +2,7 @@ import Sprite from '../Sprite/Sprite';
 import Background from '../../assets/background.png';
 import Shop from '../../assets/shop.png';
 import Mack from '../Mack/Mack';
+import Kenji from '../Kenji/Kenji';
 
 class Game {
   canvas: HTMLCanvasElement;
@@ -9,6 +10,7 @@ class Game {
   private _backgroundSprite: Sprite;
   private _shopSprite: Sprite;
   private _Mack: Mack;
+  private _Kenji: Kenji;
   private _framesCount: number;
 
   constructor() {
@@ -30,6 +32,7 @@ class Game {
     });
 
     this._Mack = new Mack();
+    this._Kenji = new Kenji();
     this._framesCount = 0;
   }
 
@@ -64,6 +67,7 @@ class Game {
 
   _renderCharacters(): void {
     this._Mack.update(this.ctx, this.canvas);
+    this._Kenji.update(this.ctx, this.canvas);
   }
 }
 
