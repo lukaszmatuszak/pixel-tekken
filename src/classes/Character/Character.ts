@@ -33,10 +33,11 @@ class Character extends Sprite {
   private _moveSpeed: number; // global
   private _jumpHeight: number; // global
   private _lastPressedKey: string;
+  private _dead: boolean;
 
   constructor(props: ICharacterConstructor) {
     const {
-      height, width, position, velocity, offset, scale, keys, sprites, attackBox
+      height, width, position, velocity, offset, scale, keys, sprites, attackBox,
     } = props;
     super({
       position,
@@ -63,10 +64,12 @@ class Character extends Sprite {
       height: attackBox.height,
       width: attackBox.width,
     };
+    this._dead = false;
 
     for (const key in this.sprites) {
-        sprites[key as keyof ISpritesCollection].image = new Image();
-        sprites[key as keyof ISpritesCollection].image.src = sprites[key as keyof ISpritesCollection].imageSrc;
+      sprites[key as keyof ISpritesCollection].image = new Image();
+      sprites[key as keyof ISpritesCollection].image.src =
+     sprites[key as keyof ISpritesCollection].imageSrc;
     }
 
     this._setUpListeners();
@@ -74,17 +77,8 @@ class Character extends Sprite {
 
   update(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
     this._animateFrames();
-
-    // ctx.fillStyle = "blue";
-    // ctx.fillRect(
-    //   this.position.x,
-    //   this.position.y,
-    //   this._width,
-    //   this._height,
-    // );
-
     this._updateAttackBoxPosition(ctx);
-    this._draw(ctx); 
+    this._draw(ctx);
 
     this.position.y += this._velocity.y;
     this.position.x += this._velocity.x;
@@ -96,6 +90,10 @@ class Character extends Sprite {
     } else {
       // aplly gravity
       this._velocity.y += this._gravity;
+    }
+
+    if (this._dead) {
+      return;
     }
 
     // set default idle sprite
@@ -112,13 +110,13 @@ class Character extends Sprite {
     this.health -= 20;
 
     if (this.health <= 0) {
-      this._switchSprite("death");
+      this._switchSprite('death');
     } else {
-      this._switchSprite("takeHit");
+      this._switchSprite('takeHit');
     }
   }
 
-  _updateAttackBoxPosition(ctx: CanvasRenderingContext2D) {
+  _updateAttackBoxPosition(ctx: CanvasRenderingContext2D): void {
     this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
     this.attackBox.position.y = this.position.y + this.attackBox.offset.y;
 
@@ -126,12 +124,12 @@ class Character extends Sprite {
   }
 
   private _drawAttackBox(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = "yellow";
+    ctx.fillStyle = 'yellow';
     ctx.fillRect(
       this.attackBox.position.x,
       this.attackBox.position.y,
       this.attackBox.width,
-      this.attackBox.height
+      this.attackBox.height,
     );
   }
 
@@ -178,13 +176,22 @@ class Character extends Sprite {
   }
 
   private _switchSprite(sprite: string): void {
+    // override other animations (death)
+    if (this.image === this.sprites.death.image) {
+      if (this.currentFrame === this.sprites.death.framesMax - 1) {
+        this._dead = true;
+      }
+      return;
+    }
     // override other animations (attack)
-    if (this.image === this.sprites.attack.image && this.currentFrame < this.sprites.attack.framesMax - 1) {
+    if (this.image === this.sprites.attack.image
+      && this.currentFrame < this.sprites.attack.framesMax - 1) {
       return;
     }
 
     // override other animations (take hit)
-    if (this.image === this.sprites.takeHit.image && this.currentFrame < this.sprites.takeHit.framesMax - 1) {
+    if (this.image === this.sprites.takeHit.image
+      && this.currentFrame < this.sprites.takeHit.framesMax - 1) {
       return;
     }
 
@@ -277,7 +284,7 @@ class Character extends Sprite {
         case this.keys.attack.key: {
           if (!this.keys.attack.pressed) {
             this._lastPressedKey = event.key;
-            this._switchSprite("attack");
+            this._switchSprite('attack');
             this.keys.attack.pressed = true;
           }
           break;
