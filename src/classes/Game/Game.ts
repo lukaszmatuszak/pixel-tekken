@@ -14,6 +14,8 @@ class Game {
   private _Mack: Mack;
   private _Kenji: Kenji;
   private _framesCount: number;
+  private _timer: number;
+  private _timerId: number;
 
   constructor() {
     this.canvas = document.querySelector('canvas');
@@ -36,6 +38,7 @@ class Game {
     this._Mack = new Mack();
     this._Kenji = new Kenji();
     this._framesCount = 0;
+    this._setUpTimer();
   }
 
   animate(): void {
@@ -55,21 +58,41 @@ class Game {
     this._determineWinner();
   }
 
-  _clearFrame(): void {
+  private _setUpTimer(): void {
+    this._timer = 60;
+    const decreaseTimer = (): void => {
+      if (this._timer > 0) {
+        this._timerId = setTimeout(decreaseTimer, 1000);
+        this._timer -= 1;
+        document.querySelector('#timer').innerHTML = this._timer.toString();
+      }
+
+      if (this._timer !== 0) {
+        return;
+      }
+
+      clearTimeout(this._timerId);
+      determineWinner(this._Mack.health, this._Kenji.health);
+    };
+
+    decreaseTimer();
+  }
+
+  private _clearFrame(): void {
     this.ctx.fillStyle = 'black';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.imageSmoothingQuality = 'high';
   }
 
-  _renderBackground(): void {
+  private _renderBackground(): void {
     this._backgroundSprite.update(this.ctx, this.canvas);
   }
 
-  _renderShop(): void {
+  private _renderShop(): void {
     this._shopSprite.update(this.ctx, this.canvas);
   }
 
-  _renderCharacters(): void {
+  private _renderCharacters(): void {
     this._Mack.update(this.ctx, this.canvas);
     this._Kenji.update(this.ctx, this.canvas);
   }
@@ -126,6 +149,7 @@ class Game {
 
   private _determineWinner(): void {
     if (this._Mack.health <= 0 || this._Kenji.health <= 0) {
+      clearTimeout(this._timerId);
       determineWinner(this._Mack.health, this._Kenji.health);
     }
   }
